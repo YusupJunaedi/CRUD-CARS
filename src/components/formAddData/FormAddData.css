@@ -1,0 +1,15 @@
+.form {
+    padding: 2vh;
+}
+
+.form .MuiFormControl-root {
+    width: 100%;
+}
+
+.btn-group {
+    text-align: center;
+}
+
+.btn-group .btn-form {
+    margin: 5px;
+}
