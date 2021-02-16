@@ -1,31 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Container, Grid, TextField, Button, Select, MenuItem, InputLabel, FormControl } from "@material-ui/core";
 import Axios from 'axios';
-import './FormAddData.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCarCreator } from "../../redux/actions/actionCar";
 
+function FormEditData({ changeOpen, setOpenNotif }) {
 
-function FormAddData({ changeOpen, setOpenNotif }) {
+    const formEdit = useSelector(state => state.car.editData)
+
+    const [form, setForm] = useState(formEdit)
+
+    console.log(form);
+
+    const dispatch = useDispatch()
 
     const handleClickOpenNotif = () => {
         setOpenNotif(true);
     };
-
-
-    const [form, setForm] = useState({
-        produsen: '',
-        nama: '',
-        harga: '',
-        mesin: '',
-        tenaga: '',
-        tmp_duduk: '',
-        jenis_trans: '',
-        gambar: []
-    })
-
-    const dispatch = useDispatch()
-
 
     const handleInputChange = (e) => {
         const { name, value, files } = e.target
@@ -46,14 +37,16 @@ function FormAddData({ changeOpen, setOpenNotif }) {
         e.preventDefault()
 
         let formData = new FormData();
+
+        if (typeof form.gambar === 'object') formData.append("gambar", form.gambar);
+
         formData.append("produsen", form.produsen);
         formData.append("nama", form.nama);
         formData.append("harga", form.harga);
         formData.append("mesin", form.mesin);
         formData.append("tenaga", form.tenaga);
-        formData.append("tempat_duduk", form.tmp_duduk);
-        formData.append("jenis_transmisi", form.jenis_trans);
-        formData.append("gambar", form.gambar);
+        formData.append("tempat_duduk", form.tempat_duduk);
+        formData.append("jenis_transmisi", form.jenis_transmisi);
 
         const configHeader = {
             headers: {
@@ -61,14 +54,22 @@ function FormAddData({ changeOpen, setOpenNotif }) {
             },
         };
 
-        const URL = `http://localhost:8000/post/`;
-        Axios.post(URL, formData, configHeader).then((res) => {
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+
+        const URL = `http://localhost:8000/post/${form._id}`;
+        Axios.patch(URL, formData, configHeader).then((res) => {
+            handleClickOpenNotif()
             dispatch(getAllCarCreator())
             changeOpen(false)
-            handleClickOpenNotif()
-        });
+        })
+            .catch(err => {
+                console.log(err);
+            })
 
     }
+
 
     return (
         <div className="form">
@@ -126,10 +127,10 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 label="Tempat Duduk"
-                                name="tmp_duduk"
+                                name="tempat_duduk"
                                 type='number'
                                 variant="outlined"
-                                value={form.tmp_duduk}
+                                value={form.tempat_duduk}
                                 onChange={handleInputChange}
                             />
                         </Grid>
@@ -139,8 +140,8 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                                 <Select
                                     labelId="demo-simple-select-outlined-label"
                                     id="demo-simple-select-outlined"
-                                    name="jenis_trans"
-                                    value={form.jenis_trans}
+                                    name="jenis_transmisi"
+                                    value={form.jenis_transmisi}
                                     onChange={handleInputChange}
                                     label="Age"
                                 >
@@ -161,10 +162,10 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                             <div className="btn-group">
                                 <Button variant="contained" color="primary" size="large" type="submit" className="btn-form">
                                     Simpan
-                            </Button>
+                        </Button>
                                 <Button variant="contained" color='default' size="large" className="btn-form" onClick={() => changeOpen(false)}>
                                     Batal
-                            </Button>
+                        </Button>
                             </div>
                         </Grid>
                     </Grid>
@@ -174,4 +175,4 @@ function FormAddData({ changeOpen, setOpenNotif }) {
     )
 }
 
-export default FormAddData
+export default FormEditData

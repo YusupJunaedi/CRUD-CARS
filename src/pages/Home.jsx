@@ -3,24 +3,39 @@ import './Home.css'
 import FormAddData from '../components/formAddData/FormAddData';
 import useTable from '../components/Table/useTable';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllCarCreator } from "../redux/actions/actionCar";
-import { Button, Container, Paper, TableBody, TableCell, TableRow, Dialog, DialogTitle, DialogContent } from '@material-ui/core';
+import { getAllCarCreator, editDataCreator } from "../redux/actions/actionCar";
+import { Button, Paper, TableBody, TableCell, TableRow } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import FormEditData from '../components/formEditData/FormEditData';
+import ModalDialog from '../components/Dialog/ModalDialog';
+import FormDeleteData from '../components/FormDeleteData/FormDeleteData';
+import Notification from '../components/notification/Notification';
+
 
 function Home() {
 
-    const cars = useSelector(state => state.car.data.reverse())
-    const [open, setOpen] = useState(false);
+    const cars = useSelector(state => state.car.data)
+    const [openFormAdd, setOpenFormAdd] = useState(false);
+    const [openFormEdit, setOpenFormEdit] = useState(false);
+    const [openFormDelete, setOpenFormDelete] = useState(false);
+    const [idDelete, setIdDelete] = useState('')
 
-    const handleClickOpen = () => {
-        setOpen(true);
+    const [openNotifAdd, setOpenNotifAdd] = useState(false);
+    const [openNotifEdit, setOpenNotifEdit] = useState(false);
+    const [openNotifDelete, setOpenNotifDelete] = useState(false);
+
+    const handleClickOpen = (type) => {
+        if (type === 'add') {
+            setOpenFormAdd(true);
+        } else if (type === 'edit') {
+            setOpenFormEdit(true)
+        } else {
+            setOpenFormDelete(true)
+        }
     };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
 
     const dispatch = useDispatch()
 
@@ -47,8 +62,6 @@ function Home() {
         recordsAfterPaging
     } = useTable(cars, headCells)
 
-    console.log(recordsAfterPaging())
-
 
     return (
         <>
@@ -56,7 +69,9 @@ function Home() {
                 {/* <FormAddData /> */}
                 <Paper variant='outlined' elevation={3}>
                     <div className="button-add">
-                        <Button variant="contained" color="primary" size='medium' onClick={handleClickOpen}>
+                        <Button variant="contained" color="primary" size='medium' onClick={() => {
+                            handleClickOpen('add')
+                        }}>
                             <AddIcon /> Tambah Data
                         </Button>
                     </div>
@@ -76,10 +91,26 @@ function Home() {
                                             <TableCell>{item.jenis_transmisi}</TableCell>
                                             <TableCell><img src={`http://localhost:8000/images/${item.gambar}`} alt={`img ${item.nama}`} className='image-car' /></TableCell>
                                             <TableCell>
-                                                <Button variant="contained" size='small' style={{ marginRight: '5px', backgroundColor: '#ffea00' }}>
+                                                <Button variant="contained" size='small' style={{ marginRight: '5px', backgroundColor: '#ffea00' }} onClick={() => {
+                                                    handleClickOpen('edit')
+                                                    dispatch(editDataCreator({
+                                                        _id: item._id,
+                                                        produsen: item.produsen,
+                                                        harga: item.harga,
+                                                        nama: item.nama,
+                                                        mesin: item.mesin,
+                                                        tenaga: item.tenaga,
+                                                        tempat_duduk: item.tempat_duduk,
+                                                        jenis_transmisi: item.jenis_transmisi,
+                                                        gambar: item.gambar
+                                                    }))
+                                                }}>
                                                     <EditIcon />
                                                 </Button>
-                                                <Button variant="contained" color='secondary' size='small'>
+                                                <Button variant="contained" color='secondary' size='small' onClick={() => {
+                                                    setIdDelete(item._id)
+                                                    handleClickOpen('delete')
+                                                }}>
                                                     <DeleteIcon />
                                                 </Button>
                                             </TableCell>
@@ -92,15 +123,34 @@ function Home() {
                     </div>
                 </Paper>
             </div>
-            <Dialog open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description">
-                <div className="title-dialog"> <AddIcon style={{ fontSize: 30, color: 'white' }} /> <h3>Tambah Data</h3> </div>
-                <DialogContent>
-                    <FormAddData changeOpen={(value) => setOpen(value)} />
-                </DialogContent>
-            </Dialog>
+
+            <ModalDialog openDialog={openFormAdd} icon={<AddIcon style={{ fontSize: 30, color: 'white' }} />} title="Tambah Data" >
+                <FormAddData changeOpen={(value) => setOpenFormAdd(value)} setOpenNotif={(value) => setOpenNotifAdd(value)} />
+            </ModalDialog>
+
+            <ModalDialog openDialog={openFormEdit} icon={<EditIcon style={{ fontSize: 30, color: 'white' }} />} title="Edit Data" >
+                <FormEditData changeOpen={(value) => setOpenFormEdit(value)} setOpenNotif={(value) => setOpenNotifEdit(value)} />
+            </ModalDialog>
+
+            <ModalDialog openDialog={openFormDelete} color="#f50057" >
+                <FormDeleteData changeOpen={(value) => setOpenFormDelete(value)} id={idDelete} setOpenNotif={(value) => setOpenNotifDelete(value)} />
+            </ModalDialog>
+
+            <Notification
+                openNotif={openNotifAdd}
+                setOpenNotif={(value) => setOpenNotifAdd(value)}
+                typeColor="success"
+                title="Data berhasil ditambahkan!" />
+            <Notification
+                openNotif={openNotifEdit}
+                setOpenNotif={(value) => setOpenNotifEdit(value)}
+                typeColor="success"
+                title="Data berhasil diubah!" />
+            <Notification
+                openNotif={openNotifDelete}
+                setOpenNotif={(value) => setOpenNotifDelete(value)}
+                typeColor="success"
+                title="Data berhasil dihapus!" />
         </>
     )
 }

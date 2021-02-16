@@ -7,3 +7,10 @@ export const getAllCarCreator = () => {
       payload: getAllCars(),
     };
   };
+
+  export const editDataCreator = (data) => {
+    return {
+      type: actionType.editData,
+      payload: data,
+    };
+  };

@@ -2,7 +2,7 @@ import actionType from "../actions/actionType";
 
 let initialState = {
   data: [],
-  error: "",
+  editData: {},
   isPending: false,
   isFulfilled: false,
   isRejected: false,
@@ -26,8 +26,13 @@ const car = (prevState = initialState, { type, payload }) => {
         ...prevState,
         isFulfilled: true,
         isPending: false,
-        data: payload.data,
+        data: payload.data.reverse(),
         isRejected: false,
+      };
+      case actionType.editData:
+      return {
+        ...prevState,
+        editData: payload
       };
     default:
       return prevState;
