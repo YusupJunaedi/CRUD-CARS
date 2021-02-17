@@ -10,8 +10,6 @@ function FormEditData({ changeOpen, setOpenNotif }) {
 
     const [form, setForm] = useState(formEdit)
 
-    console.log(form);
-
     const dispatch = useDispatch()
 
     const handleClickOpenNotif = () => {
@@ -54,11 +52,7 @@ function FormEditData({ changeOpen, setOpenNotif }) {
             },
         };
 
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
-
-        const URL = `http://localhost:8000/post/${form._id}`;
+        const URL = `http://localhost:8000/car/${form._id}`;
         Axios.patch(URL, formData, configHeader).then((res) => {
             handleClickOpenNotif()
             dispatch(getAllCarCreator())
@@ -74,10 +68,11 @@ function FormEditData({ changeOpen, setOpenNotif }) {
     return (
         <div className="form">
             <Container>
-                <form onSubmit={addData}>
+                <form onSubmit={addData} autoComplete='off'>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Produsen"
                                 name="produsen"
                                 variant="outlined"
@@ -87,6 +82,7 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Nama"
                                 name="nama"
                                 variant="outlined"
@@ -96,6 +92,7 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Harga"
                                 name="harga"
                                 type='number'
@@ -106,6 +103,7 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Mesin"
                                 name="mesin"
                                 type='number'
@@ -116,6 +114,7 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Tenaga"
                                 name="tenaga"
                                 type='number'
@@ -126,6 +125,7 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Tempat Duduk"
                                 name="tempat_duduk"
                                 type='number'
@@ -145,16 +145,19 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                                     onChange={handleInputChange}
                                     label="Age"
                                 >
+                                    <MenuItem value="CVT">CVT</MenuItem>
                                     <MenuItem value="Manual">Manual</MenuItem>
                                     <MenuItem value="Otomatis">Otomatis</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={6}>
+                            <label>Gambar</label>
                             <TextField
+                                required
                                 type="file"
                                 name="gambar"
-                                variant="outlined"
+                                helperText="Kosongkan jika tidak ingin di ubah."
                                 onChange={handleInputChange}
                             />
                         </Grid>

@@ -12,7 +12,6 @@ function FormAddData({ changeOpen, setOpenNotif }) {
         setOpenNotif(true);
     };
 
-
     const [form, setForm] = useState({
         produsen: '',
         nama: '',
@@ -61,22 +60,26 @@ function FormAddData({ changeOpen, setOpenNotif }) {
             },
         };
 
-        const URL = `http://localhost:8000/post/`;
+        const URL = `http://localhost:8000/car/`;
         Axios.post(URL, formData, configHeader).then((res) => {
             dispatch(getAllCarCreator())
             changeOpen(false)
             handleClickOpenNotif()
-        });
+        })
+            .catch(err => {
+                console.log('error => ', err);
+            })
 
     }
 
     return (
         <div className="form">
             <Container>
-                <form onSubmit={addData}>
+                <form onSubmit={addData} autoComplete='off'>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Produsen"
                                 name="produsen"
                                 variant="outlined"
@@ -86,6 +89,7 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Nama"
                                 name="nama"
                                 variant="outlined"
@@ -95,6 +99,7 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Harga"
                                 name="harga"
                                 type='number'
@@ -105,6 +110,7 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Mesin"
                                 name="mesin"
                                 type='number'
@@ -115,6 +121,7 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Tenaga"
                                 name="tenaga"
                                 type='number'
@@ -125,6 +132,7 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                required
                                 label="Tempat Duduk"
                                 name="tmp_duduk"
                                 type='number'
@@ -137,6 +145,7 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                             <FormControl variant="outlined">
                                 <InputLabel id="demo-simple-select-outlined-label">Jenis Transmisi</InputLabel>
                                 <Select
+                                    required
                                     labelId="demo-simple-select-outlined-label"
                                     id="demo-simple-select-outlined"
                                     name="jenis_trans"
@@ -144,16 +153,18 @@ function FormAddData({ changeOpen, setOpenNotif }) {
                                     onChange={handleInputChange}
                                     label="Age"
                                 >
+                                    <MenuItem value="CVT">CVT</MenuItem>
                                     <MenuItem value="Manual">Manual</MenuItem>
                                     <MenuItem value="Otomatis">Otomatis</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={6}>
+                            <label>Gambar</label>
                             <TextField
+                                required
                                 type="file"
                                 name="gambar"
-                                variant="outlined"
                                 onChange={handleInputChange}
                             />
                         </Grid>

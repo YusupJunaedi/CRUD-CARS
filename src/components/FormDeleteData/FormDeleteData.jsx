@@ -12,13 +12,12 @@ function FormDeleteData({ changeOpen, id, setOpenNotif }) {
         setOpenNotif(true);
     };
 
-
     const dispatch = useDispatch()
 
     const deleteData = (e) => {
         e.preventDefault()
 
-        const URL = `http://localhost:8000/post/${id}`;
+        const URL = `http://localhost:8000/car/${id}`;
         Axios.delete(URL).then((res) => {
             handleClickOpenNotif()
             dispatch(getAllCarCreator())

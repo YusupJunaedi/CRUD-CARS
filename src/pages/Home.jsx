@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import './Home.css'
+import numeral from 'numeral';
 import FormAddData from '../components/formAddData/FormAddData';
 import useTable from '../components/Table/useTable';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllCarCreator, editDataCreator } from "../redux/actions/actionCar";
-import { Button, Paper, TableBody, TableCell, TableRow } from '@material-ui/core';
+import { Button, Paper, TableBody, TableCell, TableRow, AppBar, Toolbar, Container } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -12,19 +13,28 @@ import FormEditData from '../components/formEditData/FormEditData';
 import ModalDialog from '../components/Dialog/ModalDialog';
 import FormDeleteData from '../components/FormDeleteData/FormDeleteData';
 import Notification from '../components/notification/Notification';
+import DriveEtaIcon from '@material-ui/icons/DriveEta';
 
 
 function Home() {
 
     const cars = useSelector(state => state.car.data)
+
     const [openFormAdd, setOpenFormAdd] = useState(false);
     const [openFormEdit, setOpenFormEdit] = useState(false);
     const [openFormDelete, setOpenFormDelete] = useState(false);
+
     const [idDelete, setIdDelete] = useState('')
 
     const [openNotifAdd, setOpenNotifAdd] = useState(false);
     const [openNotifEdit, setOpenNotifEdit] = useState(false);
     const [openNotifDelete, setOpenNotifDelete] = useState(false);
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(getAllCarCreator())
+    }, [])
 
     const handleClickOpen = (type) => {
         if (type === 'add') {
@@ -35,13 +45,6 @@ function Home() {
             setOpenFormDelete(true)
         }
     };
-
-
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        dispatch(getAllCarCreator())
-    }, [])
 
     const headCells = [
         { id: 'produsen', label: 'Produsen' },
@@ -65,9 +68,18 @@ function Home() {
 
     return (
         <>
+            {/* header */}
+            <AppBar>
+                <Toolbar>
+                    <DriveEtaIcon style={{ fontSize: 35, color: 'white', marginRight: '5px', marginLeft: '10vw' }} />
+                    <h3>Data Mobil</h3>
+                </Toolbar>
+            </AppBar>
+
             <div className="container-main">
-                {/* <FormAddData /> */}
                 <Paper variant='outlined' elevation={3}>
+
+                    {/* Button Add */}
                     <div className="button-add">
                         <Button variant="contained" color="primary" size='medium' onClick={() => {
                             handleClickOpen('add')
@@ -75,6 +87,8 @@ function Home() {
                             <AddIcon /> Tambah Data
                         </Button>
                     </div>
+
+                    {/* Table */}
                     <div className="table">
                         <TblContainer>
                             <TblHead />
@@ -84,9 +98,9 @@ function Home() {
                                         <TableRow key={item._id}>
                                             <TableCell>{item.produsen}</TableCell>
                                             <TableCell>{item.nama}</TableCell>
-                                            <TableCell>{item.harga}</TableCell>
-                                            <TableCell>{item.mesin} cc</TableCell>
-                                            <TableCell>{item.tenaga} hp</TableCell>
+                                            <TableCell>Rp. {numeral(item.harga).format('0,0')}</TableCell>
+                                            <TableCell>{numeral(item.mesin).format('0,0')} cc</TableCell>
+                                            <TableCell>{numeral(item.tenaga).format('0,0')} hp</TableCell>
                                             <TableCell>{item.tempat_duduk} kursi</TableCell>
                                             <TableCell>{item.jenis_transmisi}</TableCell>
                                             <TableCell><img src={`http://localhost:8000/images/${item.gambar}`} alt={`img ${item.nama}`} className='image-car' /></TableCell>
@@ -124,6 +138,7 @@ function Home() {
                 </Paper>
             </div>
 
+            {/* Modal */}
             <ModalDialog openDialog={openFormAdd} icon={<AddIcon style={{ fontSize: 30, color: 'white' }} />} title="Tambah Data" >
                 <FormAddData changeOpen={(value) => setOpenFormAdd(value)} setOpenNotif={(value) => setOpenNotifAdd(value)} />
             </ModalDialog>
@@ -136,6 +151,8 @@ function Home() {
                 <FormDeleteData changeOpen={(value) => setOpenFormDelete(value)} id={idDelete} setOpenNotif={(value) => setOpenNotifDelete(value)} />
             </ModalDialog>
 
+
+            {/* Notification */}
             <Notification
                 openNotif={openNotifAdd}
                 setOpenNotif={(value) => setOpenNotifAdd(value)}
