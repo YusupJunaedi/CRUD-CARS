@@ -1,20 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Grid, TextField, Button, Select, MenuItem, InputLabel, FormControl } from "@material-ui/core";
 import Axios from 'axios';
+import './FormAddData.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllCarCreator } from "../../redux/actions/actionCar";
+import { getAllMotorCreator } from "../../redux/actions/actionMotor";
 
-function FormEditData({ changeOpen, setOpenNotif }) {
 
-    const formEdit = useSelector(state => state.car.editData)
-
-    const [form, setForm] = useState(formEdit)
-
-    const dispatch = useDispatch()
+function FormAddDataMotor({ changeOpen, setOpenNotif }) {
 
     const handleClickOpenNotif = () => {
         setOpenNotif(true);
     };
+
+    const [form, setForm] = useState({
+        produsen: '',
+        nama: '',
+        harga: '',
+        mesin: '',
+        gambar: []
+    })
+
+    console.log(form)
+
+    const dispatch = useDispatch()
+
 
     const handleInputChange = (e) => {
         const { name, value, files } = e.target
@@ -35,16 +44,11 @@ function FormEditData({ changeOpen, setOpenNotif }) {
         e.preventDefault()
 
         let formData = new FormData();
-
-        if (typeof form.gambar === 'object') formData.append("gambar", form.gambar);
-
         formData.append("produsen", form.produsen);
         formData.append("nama", form.nama);
         formData.append("harga", form.harga);
         formData.append("mesin", form.mesin);
-        formData.append("tenaga", form.tenaga);
-        formData.append("tempat_duduk", form.tempat_duduk);
-        formData.append("jenis_transmisi", form.jenis_transmisi);
+        formData.append("gambar", form.gambar);
 
         const configHeader = {
             headers: {
@@ -52,18 +56,17 @@ function FormEditData({ changeOpen, setOpenNotif }) {
             },
         };
 
-        const URL = `http://localhost:8000/car/${form._id}`;
-        Axios.patch(URL, formData, configHeader).then((res) => {
-            handleClickOpenNotif()
-            dispatch(getAllCarCreator())
+        const URL = `http://localhost:8000/motor/`;
+        Axios.post(URL, formData, configHeader).then((res) => {
+            dispatch(getAllMotorCreator())
             changeOpen(false)
+            handleClickOpenNotif()
         })
             .catch(err => {
-                console.log(err);
+                console.log('error => ', err);
             })
 
     }
-
 
     return (
         <div className="form">
@@ -113,50 +116,11 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                label="Tenaga"
-                                name="tenaga"
-                                type='number'
-                                variant="outlined"
-                                value={form.tenaga}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                label="Tempat Duduk"
-                                name="tempat_duduk"
-                                type='number'
-                                variant="outlined"
-                                value={form.tempat_duduk}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <FormControl variant="outlined">
-                                <InputLabel id="demo-simple-select-outlined-label">Jenis Transmisi</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-label"
-                                    id="demo-simple-select-outlined"
-                                    name="jenis_transmisi"
-                                    value={form.jenis_transmisi}
-                                    onChange={handleInputChange}
-                                    label="Age"
-                                >
-                                    <MenuItem value="CVT">CVT</MenuItem>
-                                    <MenuItem value="Manual">Manual</MenuItem>
-                                    <MenuItem value="Otomatis">Otomatis</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
                             <label>Gambar</label>
                             <TextField
+                                required
                                 type="file"
                                 name="gambar"
-                                helperText="Kosongkan jika tidak ingin di ubah."
                                 onChange={handleInputChange}
                             />
                         </Grid>
@@ -164,10 +128,10 @@ function FormEditData({ changeOpen, setOpenNotif }) {
                             <div className="btn-group">
                                 <Button variant="contained" color="primary" size="large" type="submit" className="btn-form">
                                     Simpan
-                        </Button>
+                            </Button>
                                 <Button variant="contained" color='default' size="large" className="btn-form" onClick={() => changeOpen(false)}>
                                     Batal
-                        </Button>
+                            </Button>
                             </div>
                         </Grid>
                     </Grid>
@@ -177,4 +141,4 @@ function FormEditData({ changeOpen, setOpenNotif }) {
     )
 }
 
-export default FormEditData
+export default FormAddDataMotor

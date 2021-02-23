@@ -1,5 +1,5 @@
 import actionType from './actionType'
-import { getAllCars, addData } from "../../utils/api";
+import { getAllCars } from "../../utils/api";
 
 export const getAllCarCreator = () => {
     return {
